@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Fraunces - Display/Headings */
+@font-face {
+  font-family: "Fraunces";
+  src: url("/assets/fonts/Fraunces.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Cabinet Grotesk - Body */
+@font-face {
+  font-family: "Cabinet Grotesk";
+  src: url("/assets/fonts/CabinetGrotesk.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* Jewel-toned Indian fashion palette - warm saffron + deep crimson + teal accent */
+    --background: 0.97 0.008 60;
+    --foreground: 0.18 0.02 30;
+    --card: 1 0 0;
+    --card-foreground: 0.18 0.02 30;
+    --popover: 1 0 0;
+    --popover-foreground: 0.18 0.02 30;
+
+    /* Crimson/Burgundy primary */
+    --primary: 0.42 0.18 20;
+    --primary-foreground: 0.99 0 0;
+
+    /* Warm cream secondary */
+    --secondary: 0.94 0.03 75;
+    --secondary-foreground: 0.18 0.02 30;
+
+    --muted: 0.94 0.01 60;
+    --muted-foreground: 0.52 0.02 40;
+
+    /* Gold accent */
+    --accent: 0.75 0.12 85;
+    --accent-foreground: 0.18 0.02 30;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.99 0 0;
+
+    --border: 0.88 0.03 60;
+    --input: 0.9 0.02 60;
+    --ring: 0.42 0.18 20;
+
+    /* Custom brand tokens */
+    --gold: 0.7 0.14 85;
+    --teal: 0.55 0.14 195;
+    --crimson: 0.45 0.2 18;
+    --saffron: 0.72 0.16 72;
+
+    --chart-1: 0.42 0.18 20;
+    --chart-2: 0.55 0.14 195;
+    --chart-3: 0.7 0.14 85;
+    --chart-4: 0.6 0.16 150;
+    --chart-5: 0.65 0.18 320;
+  }
+
+  .dark {
+    --background: 0.12 0.01 25;
+    --foreground: 0.97 0.01 60;
+    --card: 0.16 0.01 25;
+    --card-foreground: 0.97 0.01 60;
+    --popover: 0.16 0.01 25;
+    --popover-foreground: 0.97 0.01 60;
+
+    --primary: 0.68 0.16 30;
+    --primary-foreground: 0.12 0.01 25;
+
+    --secondary: 0.22 0.02 40;
+    --secondary-foreground: 0.97 0.01 60;
+
+    --muted: 0.22 0.01 30;
+    --muted-foreground: 0.65 0.02 50;
+
+    --accent: 0.65 0.12 85;
+    --accent-foreground: 0.12 0.01 25;
+
+    --destructive: 0.6 0.22 25;
+    --destructive-foreground: 0.97 0 0;
+
+    --border: 0.28 0.02 35;
+    --input: 0.28 0.02 35;
+    --ring: 0.68 0.16 30;
+
+    --gold: 0.68 0.14 85;
+    --teal: 0.58 0.14 195;
+    --crimson: 0.62 0.18 22;
+    --saffron: 0.72 0.16 72;
+
+    --chart-1: 0.68 0.16 30;
+    --chart-2: 0.58 0.14 195;
+    --chart-3: 0.68 0.14 85;
+    --chart-4: 0.62 0.16 150;
+    --chart-5: 0.68 0.18 320;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Cabinet Grotesk", "system-ui", sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Fraunces", "Georgia", serif;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .font-display {
+    font-family: "Fraunces", "Georgia", serif;
+  }
+  .font-body {
+    font-family: "Cabinet Grotesk", "system-ui", sans-serif;
+  }
+}
