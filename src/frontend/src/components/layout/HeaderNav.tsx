@@ -40,7 +40,7 @@ export default function HeaderNav() {
           >
             <img
               src="/assets/generated/store-logo-transparent.dim_512x512.png"
-              alt="Gautam Fashion Store"
+              alt="A to Z Mobile Store"
               className="h-10 w-10 object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
@@ -48,7 +48,7 @@ export default function HeaderNav() {
             />
             <div className="flex flex-col leading-none">
               <span className="font-display text-lg font-bold text-primary leading-tight hidden sm:block">
-                Gautam Fashion
+                A to Z Mobile
               </span>
               <span className="font-display text-lg font-bold text-primary leading-tight sm:hidden">
                 GFS

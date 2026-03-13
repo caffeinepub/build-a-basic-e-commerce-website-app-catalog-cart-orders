@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
         <div>
           <h1 className="font-display text-3xl font-bold">Admin Dashboard</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Gautam Fashion Store — Management Panel
+            A to Z Mobile Store — Management Panel
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">

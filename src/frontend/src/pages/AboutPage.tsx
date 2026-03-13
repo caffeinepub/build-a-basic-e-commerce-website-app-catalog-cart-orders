@@ -21,7 +21,7 @@ export default function AboutPage() {
             <Heart className="w-4 h-4 fill-primary" /> Made with Love in India
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-bold mb-4">
-            Gautam Fashion Store
+            A to Z Mobile Store
           </h1>
           <p className="text-xl text-muted-foreground font-display italic mb-2">
             "Aapki Apni Fashion Duniya"
@@ -42,9 +42,9 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none text-muted-foreground space-y-3">
             <p>
-              Gautam Fashion Store ki shuruaat ek sapne se hui — ek aisa store
+              A to Z Mobile Store ki shuruaat ek sapne se hui — ek aisa store
               banana jo premium Indian ethnic wear ko har ghar tak pahuncha
-              sake. Hamare founder, Gautam ji, ne 2020 mein Jaipur se is safar
+              sake. Hamare founder, Gautam ji, ne Chiraiyakot, Mau se is safar
               ki shuruaat ki.
             </p>
             <p>
@@ -121,14 +121,14 @@ export default function AboutPage() {
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <a
-                href="tel:+919876543210"
+                href="tel:+918382027626"
                 className="flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-secondary/40 transition-colors"
               >
                 <Phone className="w-5 h-5 text-primary shrink-0" />
                 <div>
-                  <p className="font-semibold text-sm">Phone</p>
+                  <p className="font-semibold text-sm">Phone / Call</p>
                   <p className="text-muted-foreground text-sm">
-                    +91 98765 43210
+                    +91 83820 27626
                   </p>
                 </div>
               </a>
@@ -142,7 +142,7 @@ export default function AboutPage() {
                 <div>
                   <p className="font-semibold text-sm">WhatsApp</p>
                   <p className="text-muted-foreground text-sm">
-                    +91 98765 43210
+                    +91 83820 27626
                   </p>
                 </div>
               </a>
@@ -163,7 +163,7 @@ export default function AboutPage() {
                 <div>
                   <p className="font-semibold text-sm">Address</p>
                   <p className="text-muted-foreground text-sm">
-                    Jaipur, Rajasthan, India
+                    Ckt (Chiraiyakot), Mau, UP, India
                   </p>
                 </div>
               </div>
@@ -179,11 +179,11 @@ export default function AboutPage() {
                 className="gap-1.5 text-[#E4405F] border-[#E4405F]/30 hover:bg-[#E4405F]/10"
               >
                 <a
-                  href="https://instagram.com"
+                  href="https://instagram.com/gautamrajbhar41357"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <SiInstagram className="w-4 h-4" /> Instagram
+                  <SiInstagram className="w-4 h-4" /> @gautamrajbhar41357
                 </a>
               </Button>
               <Button
@@ -274,7 +274,7 @@ export default function AboutPage() {
             </p>
             <p>
               <strong className="text-foreground">Dispute Resolution:</strong>{" "}
-              Kisi bhi vivad mein Jaipur, Rajasthan ki courts jurisdiction
+              Kisi bhi vivad mein Chiraiyakot, Mau ki courts jurisdiction
               rahegi.
             </p>
             <p>

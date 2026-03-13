@@ -17,6 +17,7 @@ import {
   Shield,
   ShoppingCart,
   Truck,
+  Zap,
 } from "lucide-react";
 import { useState } from "react";
 import { SiFacebook, SiWhatsapp } from "react-icons/si";
@@ -40,7 +41,7 @@ export default function ProductDetailsPage() {
       for (let i = 0; i < quantity; i++) {
         await addToCart.mutateAsync(product.id);
       }
-      toast.success(`${quantity}x ${product.name} added to cart! 🛍️`);
+      toast.success(`${quantity}x ${product.name} cart mein add ho gaya! 🛍️`);
       setQuantity(1);
     } catch (error: unknown) {
       const err = error as { message?: string };
@@ -52,10 +53,27 @@ export default function ProductDetailsPage() {
     }
   };
 
+  const handleBuyNow = async () => {
+    if (!product) return;
+    try {
+      for (let i = 0; i < quantity; i++) {
+        await addToCart.mutateAsync(product.id);
+      }
+      navigate({ to: "/checkout" });
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      if (err.message?.includes("Unauthorized")) {
+        toast.error("Please sign in to buy");
+      } else {
+        toast.error("Failed to proceed");
+      }
+    }
+  };
+
   const handleWhatsAppShare = () => {
     if (!product) return;
     const text = encodeURIComponent(
-      `Check out ${product.name} at Gautam Fashion Store! 🛍️\n₹${Number(product.price)}\n${currentURL}`,
+      `Check out ${product.name} at A to Z Mobile Store! 📱\n₹${Number(product.price)}\n${currentURL}`,
     );
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
     toast.success("Opening WhatsApp...");
@@ -138,21 +156,34 @@ export default function ProductDetailsPage() {
             variant="outline"
             className="w-fit mb-3 text-xs text-muted-foreground"
           >
-            Gautam Fashion Store
+            A to Z Mobile Store
           </Badge>
           <h1 className="font-display text-3xl md:text-4xl font-bold mb-3">
             {product.name}
           </h1>
 
-          <div className="flex items-baseline gap-3 mb-6">
+          <div className="flex items-baseline gap-3 mb-4">
             <span className="text-3xl font-bold text-primary">
               ₹{Number(product.price).toLocaleString("en-IN")}
             </span>
           </div>
 
+          {/* Offer badges */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
+              🎁 Exchange Offer Available
+            </span>
+            <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">
+              📆 No Cost EMI
+            </span>
+            <span className="bg-yellow-100 text-yellow-700 text-xs font-semibold px-2 py-1 rounded-full">
+              💳 Bank Cashback
+            </span>
+          </div>
+
           <p className="text-muted-foreground leading-relaxed mb-6">
             {product.description ||
-              `High-quality ${product.name.toLowerCase()} — premium Indian ethnic wear crafted with the finest materials. Perfect for festivals, weddings, and special occasions.`}
+              `${product.name} — ek behtareen smartphone jo aapko best camera, battery aur performance deta hai. Top brand quality ke saath aata hai guarantee aur warranty ke saath.`}
           </p>
 
           {/* Quantity */}
@@ -165,17 +196,30 @@ export default function ProductDetailsPage() {
             />
           </div>
 
-          {/* Add to Cart */}
-          <Button
-            size="lg"
-            className="w-full mb-4 gap-2 font-semibold"
-            onClick={handleAddToCart}
-            disabled={addToCart.isPending}
-            data-ocid="product.addtocart.button"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {addToCart.isPending ? "Adding to Cart..." : "Add to Cart"}
-          </Button>
+          {/* Buy Now + Add to Cart */}
+          <div className="flex flex-col gap-3 mb-6">
+            <Button
+              size="lg"
+              className="w-full gap-2 font-bold text-base bg-orange-500 hover:bg-orange-600 text-white"
+              onClick={handleBuyNow}
+              disabled={addToCart.isPending}
+              data-ocid="product.buynow.button"
+            >
+              <Zap className="w-5 h-5" />
+              {addToCart.isPending ? "Processing..." : "Buy Now"}
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full gap-2 font-semibold"
+              onClick={handleAddToCart}
+              disabled={addToCart.isPending}
+              data-ocid="product.addtocart.button"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              {addToCart.isPending ? "Adding to Cart..." : "Add to Cart"}
+            </Button>
+          </div>
 
           {/* Share Buttons */}
           <div className="flex items-center gap-2 mb-6">

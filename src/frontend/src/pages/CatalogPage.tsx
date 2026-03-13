@@ -11,136 +11,174 @@ import {
   ChevronRight,
   Play,
   ShoppingCart,
+  Smartphone,
   Star,
   Tag,
   TrendingUp,
+  Zap,
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-// ─── Static Products ─────────────────────────────────────────────────────────
+// ─── Mobile Products ─────────────────────────────────────────────────────────
 const STATIC_PRODUCTS = [
   {
-    id: "s1",
-    name: "Blue Embroidered Kurta Set",
-    price: 1299,
-    originalPrice: 1899,
-    image: "/assets/generated/product-kurta-blue.dim_600x800.jpg",
+    id: "m1",
+    name: "Samsung Galaxy S24",
+    price: 54999,
+    originalPrice: 74999,
+    image: "/assets/generated/mobile-samsung-s24.dim_600x800.jpg",
     badge: "SALE" as const,
-    category: "Women",
+    category: "Flagship",
+    specs: "6.2 inch AMOLED | 50MP | 4000mAh | 8GB RAM",
+    offer: "Exchange Bonus ₹5000",
   },
   {
-    id: "s2",
-    name: "Cream Sherwani",
-    price: 3499,
-    originalPrice: 4999,
-    image: "/assets/generated/product-sherwani.dim_600x800.jpg",
+    id: "m2",
+    name: "iPhone 15 Pro",
+    price: 119999,
+    originalPrice: 134900,
+    image: "/assets/generated/mobile-iphone15pro.dim_600x800.jpg",
     badge: "NEW" as const,
-    category: "Men",
+    category: "Flagship",
+    specs: "6.1 inch OLED | 48MP | 3274mAh | A17 Pro",
+    offer: "EMI 0% 12 months",
   },
   {
-    id: "s3",
-    name: "Red Silk Saree",
-    price: 2199,
-    originalPrice: 3200,
-    image: "/assets/generated/product-saree-red.dim_600x800.jpg",
+    id: "m3",
+    name: "Redmi Note 13 Pro",
+    price: 18999,
+    originalPrice: 24999,
+    image: "/assets/generated/mobile-redmi-note13.dim_600x800.jpg",
     badge: "SALE" as const,
-    category: "Women",
+    category: "Mid-Range",
+    specs: "6.67 inch AMOLED | 200MP | 5000mAh | 12GB RAM",
+    offer: "Coupon: GET500 pe ₹500 off",
   },
   {
-    id: "s4",
-    name: "White Casual Kurta",
-    price: 899,
-    originalPrice: 1299,
-    image: "/assets/generated/product-kurta-white.dim_600x800.jpg",
-    badge: null,
-    category: "Men",
-  },
-  {
-    id: "s5",
-    name: "Pink Lehenga Choli",
-    price: 4999,
-    originalPrice: 7999,
-    image: "/assets/generated/product-lehenga-pink.dim_600x800.jpg",
+    id: "m4",
+    name: "Realme 12 Pro+",
+    price: 21999,
+    originalPrice: 27999,
+    image: "/assets/generated/mobile-realme12pro.dim_600x800.jpg",
     badge: "BESTSELLER" as const,
-    category: "Women",
+    category: "Mid-Range",
+    specs: "6.7 inch OLED | 50MP | 5000mAh | 8GB RAM",
+    offer: "Free Earbuds worth ₹2499",
   },
   {
-    id: "s6",
-    name: "Green Pathani Suit",
-    price: 1599,
-    originalPrice: 2100,
-    image: "/assets/generated/product-pathani-green.dim_600x800.jpg",
-    badge: "NEW" as const,
-    category: "Men",
-  },
-  {
-    id: "s7",
-    name: "Purple Anarkali Suit",
-    price: 2799,
-    originalPrice: 3999,
-    image: "/assets/generated/product-anarkali-purple.dim_600x800.jpg",
+    id: "m5",
+    name: "OnePlus 12",
+    price: 64999,
+    originalPrice: 79999,
+    image: "/assets/generated/mobile-oneplus12.dim_600x800.jpg",
     badge: "SALE" as const,
-    category: "Women",
+    category: "Flagship",
+    specs: "6.82 inch AMOLED | 50MP | 5400mAh | 12GB RAM",
+    offer: "Exchange + ₹7000 off",
   },
   {
-    id: "s8",
-    name: "Yellow Silk Kurta",
-    price: 1899,
-    originalPrice: 2599,
-    image: "/assets/generated/product-kurta-yellow.dim_600x800.jpg",
+    id: "m6",
+    name: "Vivo V30 Pro",
+    price: 34999,
+    originalPrice: 42999,
+    image: "/assets/generated/mobile-vivo-v30pro.dim_600x800.jpg",
+    badge: "NEW" as const,
+    category: "Mid-Range",
+    specs: "6.78 inch AMOLED | 50MP | 5000mAh | 12GB RAM",
+    offer: "Bank offer: 10% cashback",
+  },
+  {
+    id: "m7",
+    name: "Oppo Reno 11 Pro",
+    price: 29999,
+    originalPrice: 39999,
+    image: "/assets/generated/mobile-oppo-reno11.dim_600x800.jpg",
+    badge: "SALE" as const,
+    category: "Mid-Range",
+    specs: "6.74 inch AMOLED | 50MP | 4600mAh | 12GB RAM",
+    offer: "Free Back Cover + Screen Guard",
+  },
+  {
+    id: "m8",
+    name: "Poco X6 Pro",
+    price: 22999,
+    originalPrice: 29999,
+    image: "/assets/generated/mobile-poco-x6pro.dim_600x800.jpg",
+    badge: "SALE" as const,
+    category: "Budget",
+    specs: "6.67 inch AMOLED | 64MP | 5000mAh | 12GB RAM",
+    offer: "Gaming Phone - Turbo Edition",
+  },
+  {
+    id: "m9",
+    name: "Samsung Galaxy A55",
+    price: 27999,
+    originalPrice: 34999,
+    image: "/assets/generated/mobile-samsung-a55.dim_600x800.jpg",
     badge: null,
-    category: "Men",
+    category: "Mid-Range",
+    specs: "6.6 inch AMOLED | 50MP | 5000mAh | 8GB RAM",
+    offer: "No Cost EMI available",
   },
   {
-    id: "s9",
-    name: "Turquoise Palazzo Set",
-    price: 1099,
-    originalPrice: 1599,
-    image: "/assets/generated/product-palazzo-turquoise.dim_600x800.jpg",
-    badge: "SALE" as const,
-    category: "Women",
-  },
-  {
-    id: "s10",
-    name: "White Dhoti Kurta Set",
-    price: 2299,
-    originalPrice: 3100,
-    image: "/assets/generated/product-dhoti-white.dim_600x800.jpg",
+    id: "m10",
+    name: "Motorola Edge 50 Pro",
+    price: 31999,
+    originalPrice: 39999,
+    image: "/assets/generated/mobile-moto-edge50.dim_600x800.jpg",
     badge: "NEW" as const,
-    category: "Men",
+    category: "Mid-Range",
+    specs: "6.7 inch pOLED | 50MP | 4500mAh | 12GB RAM",
+    offer: "₹3000 exchange bonus",
   },
 ];
 
 // ─── Customer Reviews ─────────────────────────────────────────────────────────
 const REVIEWS = [
   {
-    name: "Priya Sharma",
+    name: "Ravi Sharma",
     rating: 5,
     review:
-      "Bahut sundar kapde mile! Quality ekdum first class hai. Main dobaara order karungi.",
+      "Samsung S24 bahut badhiya hai! Camera quality ekdum first class. Delivery bhi fast thi.",
     location: "Mumbai",
   },
   {
-    name: "Rahul Verma",
+    name: "Priya Singh",
     rating: 5,
     review:
-      "Sherwani ka quality amazing hai. Shaadi mein bahut tarif hui. Highly recommended!",
+      "iPhone 15 Pro mil gaya best price mein! Packing safe thi. Bahut khush hoon!",
     location: "Delhi",
   },
   {
-    name: "Sunita Patel",
+    name: "Suresh Patel",
     rating: 4,
     review:
-      "Lehenga bilkul picture jaisa aaya. Stitching tight hai. Happy customer!",
+      "Redmi Note 13 Pro ki battery aur camera dono amazing hain. Value for money!",
     location: "Ahmedabad",
   },
   {
-    name: "Amit Kumar",
+    name: "Amit Verma",
     rating: 5,
     review:
-      "Fast delivery, packaging ekdum safe. Kurta ka colour exact same as shown. 5 stars!",
+      "OnePlus 12 liya, performance ekdum top hai. Discount aur offer bhi mila. 5 stars!",
     location: "Jaipur",
+  },
+];
+
+// ─── Special Offers ───────────────────────────────────────────────────────────
+const OFFERS = [
+  { icon: "💳", title: "Bank Cashback", desc: "10% off on SBI/HDFC cards" },
+  {
+    icon: "📦",
+    title: "Exchange Offer",
+    desc: "Old phone pe extra ₹3000-7000",
+  },
+  { icon: "📆", title: "No Cost EMI", desc: "0% interest upto 12 months" },
+  {
+    icon: "🎁",
+    title: "Free Accessories",
+    desc: "Earbuds/Cover with select phones",
   },
 ];
 
@@ -170,12 +208,20 @@ function StaticProductCard({
     (1 - product.price / product.originalPrice) * 100,
   );
   const [adding, setAdding] = useState(false);
+  const navigate = useNavigate();
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     setAdding(true);
     await new Promise((r) => setTimeout(r, 500));
     setAdding(false);
-    toast.success(`${product.name} added to cart! 🛍️`);
+    toast.success(`${product.name} cart mein add ho gaya! 🛍️`);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toast.success(`${product.name} -- Checkout pe ja rahe hain!`);
+    navigate({ to: "/checkout" });
   };
 
   return (
@@ -198,11 +244,17 @@ function StaticProductCard({
         )}
       </div>
       <div className="p-3">
-        <p className="text-xs text-muted-foreground mb-1">{product.category}</p>
-        <h3 className="font-semibold text-sm leading-snug mb-2 line-clamp-2">
+        <p className="text-xs text-muted-foreground mb-1 flex items-center gap-1">
+          <Smartphone className="w-3 h-3" />
+          {product.category}
+        </p>
+        <h3 className="font-semibold text-sm leading-snug mb-1 line-clamp-2">
           {product.name}
         </h3>
-        <div className="flex items-baseline gap-2 mb-3">
+        <p className="text-xs text-muted-foreground mb-2 line-clamp-1">
+          {product.specs}
+        </p>
+        <div className="flex items-baseline gap-2 mb-1">
           <span className="font-bold text-primary text-base">
             ₹{product.price.toLocaleString("en-IN")}
           </span>
@@ -210,15 +262,31 @@ function StaticProductCard({
             ₹{product.originalPrice.toLocaleString("en-IN")}
           </span>
         </div>
-        <Button
-          size="sm"
-          className="w-full gap-1.5 text-xs"
-          onClick={handleAddToCart}
-          disabled={adding}
-        >
-          <ShoppingCart className="w-3.5 h-3.5" />
-          {adding ? "Adding..." : "Add to Cart"}
-        </Button>
+        {product.offer && (
+          <p className="text-xs text-green-600 font-medium mb-2 bg-green-50 rounded px-1.5 py-0.5 truncate">
+            🎁 {product.offer}
+          </p>
+        )}
+        <div className="flex flex-col gap-1.5">
+          <Button
+            size="sm"
+            className="w-full gap-1.5 text-xs bg-orange-500 hover:bg-orange-600 text-white font-bold"
+            onClick={handleBuyNow}
+          >
+            <Zap className="w-3.5 h-3.5" />
+            Buy Now
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-full gap-1.5 text-xs"
+            onClick={handleAddToCart}
+            disabled={adding}
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+            {adding ? "Adding..." : "Add to Cart"}
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -243,9 +311,9 @@ export default function CatalogPage() {
   const navigate = useNavigate();
   const { data: products, isLoading } = useGetAllProducts();
   const addToCart = useAddToCart();
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "Men" | "Women">(
-    "all",
-  );
+  const [categoryFilter, setCategoryFilter] = useState<
+    "all" | "Budget" | "Mid-Range" | "Flagship"
+  >("all");
   const [videoPlaying, setVideoPlaying] = useState(false);
   const productsRef = useRef<HTMLDivElement>(null);
 
@@ -279,25 +347,23 @@ export default function CatalogPage() {
       <section className="relative w-full h-[420px] md:h-[520px] lg:h-[600px] overflow-hidden">
         <img
           src="/assets/generated/hero-banner.dim_1600x600.png"
-          alt="Gautam Fashion Store - Premium Indian Fashion"
+          alt="A to Z Mobile Store - Best Smartphones"
           className="absolute inset-0 w-full h-full object-cover"
-          priority-fetch="high"
         />
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20" />
 
         <div className="relative z-10 flex flex-col justify-center h-full container mx-auto px-4">
           <div className="max-w-2xl">
             <Badge className="mb-4 bg-[oklch(0.70_0.14_85)] text-[oklch(0.18_0.02_30)] font-semibold text-xs uppercase tracking-wider">
-              New Collection 2026
+              Best Mobile Deals 2026
             </Badge>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-              Gautam
+              A to Z
               <br />
-              <span className="text-[oklch(0.82_0.14_85)]">Fashion Store</span>
+              <span className="text-[oklch(0.82_0.14_85)]">Mobile Store</span>
             </h1>
             <p className="text-white/85 text-base md:text-lg mb-8 max-w-lg">
-              Premium Indian Fashion — Delivered to Your Door
+              Top Brands, Best Prices — iPhone, Samsung, OnePlus & More!
             </p>
             <div className="flex flex-wrap gap-3">
               <Button
@@ -320,24 +386,38 @@ export default function CatalogPage() {
           </div>
         </div>
 
-        {/* Decorative diagonal stripe */}
         <div
           className="absolute bottom-0 left-0 right-0 h-12 bg-background"
           style={{ clipPath: "polygon(0 100%, 100% 0, 100% 100%)" }}
         />
       </section>
 
-      {/* ── B. Promo Banner Strip ─────────────────────────────────────────── */}
+      {/* ── B. Special Offers Strip ───────────────────────────────────────── */}
       <section className="py-6 bg-background">
         <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+            {OFFERS.map((offer) => (
+              <div
+                key={offer.title}
+                className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-4 text-center"
+              >
+                <span className="text-2xl block mb-1">{offer.icon}</span>
+                <p className="font-bold text-sm">{offer.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {offer.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
           <button
             type="button"
             className="relative w-full rounded-2xl overflow-hidden cursor-pointer group text-left"
             onClick={scrollToProducts}
           >
             <img
-              src="/assets/generated/promo-banner-sale.dim_1200x400.jpg"
-              alt="Sale Up to 50% Off"
+              src="/assets/generated/promo-mobile-sale.dim_1200x400.jpg"
+              alt="Mobile Sale Up to 40% Off"
               className="w-full object-cover h-36 md:h-52 group-hover:scale-105 transition-transform duration-500"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-transparent flex items-center">
@@ -345,14 +425,14 @@ export default function CatalogPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <Tag className="w-5 h-5 text-[oklch(0.82_0.14_85)]" />
                   <span className="text-[oklch(0.82_0.14_85)] text-sm font-bold uppercase tracking-widest">
-                    Limited Time
+                    Sasta Mobile Mahotsav
                   </span>
                 </div>
                 <h2 className="font-display text-2xl md:text-4xl font-bold text-white leading-tight">
-                  SALE UP TO 50% OFF
+                  SALE UP TO 40% OFF
                 </h2>
                 <p className="text-white/80 mt-1 text-sm md:text-base">
-                  On selected ethnic wear — Shop before it's gone!
+                  Top smartphones pe bade offers — Jaldi shop karo!
                 </p>
               </div>
             </div>
@@ -366,11 +446,10 @@ export default function CatalogPage() {
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="w-5 h-5 text-primary" />
             <h2 className="font-display text-2xl md:text-3xl font-bold">
-              Trending This Week
+              Trending Mobiles
             </h2>
           </div>
 
-          {/* Backend products if loaded */}
           {isLoading ? (
             <ProductGridSkeleton count={4} />
           ) : products && products.length > 0 ? (
@@ -389,7 +468,6 @@ export default function CatalogPage() {
               ))}
             </div>
           ) : (
-            // Show static trending if backend empty
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {trendingProducts.map((product, i) => (
                 <div key={product.id} className="relative">
@@ -409,12 +487,14 @@ export default function CatalogPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h2 className="font-display text-2xl md:text-3xl font-bold">
-              Our Collection
+              Sabhi Mobiles
             </h2>
             <Tabs
               value={categoryFilter}
               onValueChange={(v) =>
-                setCategoryFilter(v as "all" | "Men" | "Women")
+                setCategoryFilter(
+                  v as "all" | "Budget" | "Mid-Range" | "Flagship",
+                )
               }
             >
               <TabsList className="bg-secondary">
@@ -426,18 +506,25 @@ export default function CatalogPage() {
                   All
                 </TabsTrigger>
                 <TabsTrigger
-                  value="Men"
+                  value="Budget"
                   data-ocid="catalog.filter.tab"
                   className="text-sm"
                 >
-                  Men
+                  Budget
                 </TabsTrigger>
                 <TabsTrigger
-                  value="Women"
+                  value="Mid-Range"
                   data-ocid="catalog.filter.tab"
                   className="text-sm"
                 >
-                  Women
+                  Mid-Range
+                </TabsTrigger>
+                <TabsTrigger
+                  value="Flagship"
+                  data-ocid="catalog.filter.tab"
+                  className="text-sm"
+                >
+                  Flagship
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -459,7 +546,7 @@ export default function CatalogPage() {
               className="text-center py-16"
             >
               <p className="text-muted-foreground">
-                Koi product nahi mila is category mein.
+                Koi mobile nahi mila is category mein.
               </p>
               <Button
                 variant="outline"
@@ -478,10 +565,10 @@ export default function CatalogPage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-8">
             <h2 className="font-display text-2xl md:text-3xl font-bold mb-2">
-              See Our Latest Collection
+              Dekhiye Latest Mobile Reviews
             </h2>
             <p className="text-muted-foreground">
-              Hamare exclusive collection ka experience karo
+              Best mobiles ka unboxing aur review dekhein
             </p>
           </div>
           <div className="max-w-3xl mx-auto">
@@ -490,7 +577,7 @@ export default function CatalogPage() {
                 <div className="aspect-video">
                   <iframe
                     src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                    title="Gautam Fashion Store Collection Video"
+                    title="Mobile Review Video"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
@@ -514,18 +601,17 @@ export default function CatalogPage() {
                       <Play className="w-8 h-8 text-primary-foreground fill-primary-foreground ml-1" />
                     </div>
                     <p className="text-white font-display text-xl font-semibold drop-shadow">
-                      Watch Our Collection
+                      Watch Mobile Review
                     </p>
                     <p className="text-white/70 text-sm">
-                      Hamare latest designs aur collection dekhein
+                      Top mobile ka honest review aur comparison
                     </p>
                   </div>
                 </button>
               )}
               <div className="p-4 bg-card">
                 <p className="text-sm text-muted-foreground text-center">
-                  🎬 Gautam Fashion Store — Exclusive 2026 Ethnic Wear
-                  Collection
+                  📱 A to Z Mobile Store — Best Smartphone Deals 2026
                 </p>
               </div>
             </div>
@@ -548,7 +634,7 @@ export default function CatalogPage() {
             {REVIEWS.map((review, i) => (
               <Card
                 key={review.name}
-                data-ocid={`catalog.product.card.${i + 1}`}
+                data-ocid={`catalog.review.card.${i + 1}`}
                 className="hover:shadow-md transition-shadow duration-300 border-border"
               >
                 <CardContent className="p-5">

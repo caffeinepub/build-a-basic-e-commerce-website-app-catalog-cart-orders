@@ -94,14 +94,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
               <div className="flex items-center gap-2 mb-4">
                 <img
                   src="/assets/generated/store-logo-transparent.dim_512x512.png"
-                  alt="Gautam Fashion Store"
+                  alt="A to Z Mobile Store"
                   className="h-10 w-10 object-contain"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
                 <span className="font-display text-xl font-bold text-primary">
-                  Gautam Fashion
+                  A to Z Mobile
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
@@ -119,7 +119,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   <SiFacebook className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://instagram.com"
+                  href="https://instagram.com/gautamrajbhar41357"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary transition-colors"
@@ -259,10 +259,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <li className="flex items-start gap-2">
                   <Phone className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <a
-                    href="tel:+919876543210"
+                    href="tel:+918382027626"
                     className="hover:text-primary transition-colors"
                   >
-                    +91 98765 43210
+                    +91 83820 27626
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
@@ -273,7 +273,18 @@ export default function AppLayout({ children }: AppLayoutProps) {
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
                   >
-                    WhatsApp Support
+                    +91 83820 27626
+                  </a>
+                </li>
+                <li className="flex items-start gap-2">
+                  <SiInstagram className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                  <a
+                    href="https://instagram.com/gautamrajbhar41357"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-primary transition-colors"
+                  >
+                    @gautamrajbhar41357
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
@@ -287,14 +298,14 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 </li>
                 <li className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
-                  <span>Jaipur, Rajasthan, India</span>
+                  <span>Ckt (Chiraiyakot), Mau, India</span>
                 </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-muted-foreground">
-            <p>© {currentYear} Gautam Fashion Store. All rights reserved.</p>
+            <p>© {currentYear} A to Z Mobile Store. All rights reserved.</p>
             <p>
               Built with ❤️ using{" "}
               <a
