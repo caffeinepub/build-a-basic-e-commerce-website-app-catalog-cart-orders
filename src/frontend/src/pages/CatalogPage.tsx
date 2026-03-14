@@ -220,7 +220,16 @@ function StaticProductCard({
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toast.success(`${product.name} -- Checkout pe ja rahe hain!`);
+    sessionStorage.setItem(
+      "directBuyProduct",
+      JSON.stringify({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        specs: product.specs,
+      }),
+    );
     navigate({ to: "/checkout" });
   };
 

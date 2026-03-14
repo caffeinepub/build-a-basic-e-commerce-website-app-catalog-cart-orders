@@ -46,11 +46,7 @@ const cartRoute = createRoute({
 const checkoutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/checkout",
-  component: () => (
-    <RequireAuth>
-      <CheckoutPage />
-    </RequireAuth>
-  ),
+  component: CheckoutPage,
 });
 
 const ordersRoute = createRoute({

@@ -24,10 +24,10 @@ export default function AboutPage() {
             A to Z Mobile Store
           </h1>
           <p className="text-xl text-muted-foreground font-display italic mb-2">
-            "Aapki Apni Fashion Duniya"
+            "Aapki Apni Mobile Duniya"
           </p>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Premium Indian ethnic wear — delivered with care, designed for you.
+            Premium mobile phones — delivered with care, chosen for you.
           </p>
         </div>
       </section>
@@ -37,24 +37,23 @@ export default function AboutPage() {
         <Card className="border-border shadow-sm">
           <CardHeader>
             <CardTitle className="font-display text-2xl flex items-center gap-2">
-              <span className="text-2xl">🌸</span> Hamari Kahani (Our Story)
+              <span className="text-2xl">📱</span> Hamari Kahani (Our Story)
             </CardTitle>
           </CardHeader>
           <CardContent className="prose prose-sm max-w-none text-muted-foreground space-y-3">
             <p>
               A to Z Mobile Store ki shuruaat ek sapne se hui — ek aisa store
-              banana jo premium Indian ethnic wear ko har ghar tak pahuncha
-              sake. Hamare founder, Gautam ji, ne Chiraiyakot, Mau se is safar
-              ki shuruaat ki.
+              banana jo premium smartphones ko har ghar tak pahuncha sake.
+              Hamare founder ne Chiraiyakot, Mau se is safar ki shuruaat ki.
             </p>
             <p>
               Aaj hum 10,000+ khush grahak ke saath India ke sabse trusted
-              ethnic fashion brands mein se ek hain. Hamare har kapde mein desh
-              ki sanskriti aur aaj ka fashion dono jhalkta hai.
+              mobile phone stores mein se ek hain. Hamare paas Samsung, iPhone,
+              OnePlus, Redmi, Realme aur aur brands ke best models hain.
             </p>
             <p>
-              Chahe shaadi ho ya puja, office party ho ya casual outing — Gautam
-              Fashion Store mein aapke liye perfect look hai.
+              Chahe pehla smartphone ho ya upgrade — A to Z Mobile Store mein
+              aapke liye perfect phone hai.
             </p>
           </CardContent>
         </Card>
@@ -69,14 +68,14 @@ export default function AboutPage() {
           <CardContent className="text-muted-foreground">
             <p className="mb-4">
               Hamara mission hai ki har Indian ko high-quality, affordable aur
-              authentic ethnic wear milna chahiye. Hum ensure karte hain:
+              authentic smartphone milna chahiye. Hum ensure karte hain:
             </p>
             <div className="grid sm:grid-cols-2 gap-4">
               {[
                 {
                   icon: <Star className="w-5 h-5" />,
                   title: "Premium Quality",
-                  desc: "Behtareen materials aur craftsmanship",
+                  desc: "Genuine phones aur best warranty",
                 },
                 {
                   icon: <Truck className="w-5 h-5" />,
@@ -86,7 +85,7 @@ export default function AboutPage() {
                 {
                   icon: <Package className="w-5 h-5" />,
                   title: "Safe Packaging",
-                  desc: "Kapde bilkul safe pahunchen",
+                  desc: "Phone bilkul safe pahunche",
                 },
                 {
                   icon: <Heart className="w-5 h-5" />,
@@ -121,19 +120,19 @@ export default function AboutPage() {
           <CardContent className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <a
-                href="tel:+918382027626"
+                href="tel:+919415290758"
                 className="flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-secondary/40 transition-colors"
               >
                 <Phone className="w-5 h-5 text-primary shrink-0" />
                 <div>
                   <p className="font-semibold text-sm">Phone / Call</p>
                   <p className="text-muted-foreground text-sm">
-                    +91 83820 27626
+                    +91 94152 90758
                   </p>
                 </div>
               </a>
               <a
-                href="https://wa.me/918382027626"
+                href="https://wa.me/919415290758"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-secondary/40 transition-colors"
@@ -142,19 +141,19 @@ export default function AboutPage() {
                 <div>
                   <p className="font-semibold text-sm">WhatsApp</p>
                   <p className="text-muted-foreground text-sm">
-                    +91 83820 27626
+                    +91 94152 90758
                   </p>
                 </div>
               </a>
               <a
-                href="mailto:gautamfashion@email.com"
+                href="mailto:singhnitish8625@gmail.com"
                 className="flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-secondary/40 transition-colors"
               >
                 <Mail className="w-5 h-5 text-primary shrink-0" />
                 <div>
                   <p className="font-semibold text-sm">Email</p>
                   <p className="text-muted-foreground text-sm">
-                    gautamfashion@email.com
+                    singhnitish8625@gmail.com
                   </p>
                 </div>
               </a>
@@ -235,8 +234,11 @@ export default function AboutPage() {
             <p>
               <strong className="text-foreground">Contact:</strong> Privacy
               concerns ke liye email karein:{" "}
-              <a href="mailto:gautamfashion@email.com" className="text-primary">
-                gautamfashion@email.com
+              <a
+                href="mailto:singhnitish8625@gmail.com"
+                className="text-primary"
+              >
+                singhnitish8625@gmail.com
               </a>
             </p>
           </CardContent>
@@ -259,7 +261,7 @@ export default function AboutPage() {
             </p>
             <p>
               <strong className="text-foreground">Returns:</strong> Product
-              receive karne ke 7 din mein return request karein. Product unworn
+              receive karne ke 7 din mein return request karein. Product unused
               aur original packaging mein hona chahiye.
             </p>
             <p>

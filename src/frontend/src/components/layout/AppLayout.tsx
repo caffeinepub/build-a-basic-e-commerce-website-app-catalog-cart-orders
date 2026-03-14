@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "@tanstack/react-router";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone, X } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import {
   SiFacebook,
@@ -20,10 +20,17 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   const currentYear = new Date().getFullYear();
   const appIdentifier = encodeURIComponent(
-    window.location.hostname || "gautam-fashion-store",
+    window.location.hostname || "a-to-z-mobile-store",
   );
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [showWhatsAppTooltip, setShowWhatsAppTooltip] = useState(true);
+
+  const whatsappNumber = "918382027626";
+  const whatsappMessage = encodeURIComponent(
+    "Hello! A to Z Mobile Store se ek query hai.",
+  );
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,8 +112,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 </span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                Premium Indian ethnic wear delivered to your doorstep. Saree,
-                Lehenga, Sherwani — har occasion ke liye perfect look.
+                Premium mobile phones delivered to your doorstep. Samsung,
+                iPhone, OnePlus — har budget ke liye best smartphone.
               </p>
               <div className="flex gap-3">
                 <a
@@ -146,7 +153,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
                   <SiX className="w-5 h-5" />
                 </a>
                 <a
-                  href="https://wa.me/918382027626"
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-primary transition-colors"
@@ -219,32 +226,32 @@ export default function AppLayout({ children }: AppLayoutProps) {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Women's Ethnic
+                    Samsung
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Men's Ethnic
+                    iPhone
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Sarees
+                    OnePlus
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Lehengas
+                    Redmi
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Sherwanis
+                    Realme
                   </span>
                 </li>
                 <li>
                   <span className="hover:text-primary transition-colors cursor-pointer">
-                    Kurta Sets
+                    All Brands
                   </span>
                 </li>
               </ul>
@@ -259,16 +266,16 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <li className="flex items-start gap-2">
                   <Phone className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <a
-                    href="tel:+918382027626"
+                    href="tel:+919415290758"
                     className="hover:text-primary transition-colors"
                   >
-                    +91 83820 27626
+                    +91 94152 90758
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
                   <SiWhatsapp className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <a
-                    href="https://wa.me/918382027626"
+                    href={whatsappUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-primary transition-colors"
@@ -290,10 +297,10 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <li className="flex items-start gap-2">
                   <Mail className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
                   <a
-                    href="mailto:gautamfashion@email.com"
+                    href="mailto:singhnitish8625@gmail.com"
                     className="hover:text-primary transition-colors"
                   >
-                    gautamfashion@email.com
+                    singhnitish8625@gmail.com
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
@@ -320,6 +327,35 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </div>
         </div>
       </footer>
+
+      {/* Floating WhatsApp Chat Button */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+        {showWhatsAppTooltip && (
+          <div className="relative bg-white text-gray-800 text-sm font-medium px-4 py-2 rounded-2xl shadow-lg border border-gray-100 max-w-[200px] text-center animate-fade-in">
+            <button
+              type="button"
+              onClick={() => setShowWhatsAppTooltip(false)}
+              className="absolute -top-2 -right-2 bg-gray-200 hover:bg-gray-300 rounded-full w-5 h-5 flex items-center justify-center transition-colors"
+              aria-label="Close"
+              data-ocid="whatsapp.tooltip.close_button"
+            >
+              <X className="w-3 h-3" />
+            </button>
+            Humse WhatsApp par baat karein! 💬
+            <div className="absolute bottom-[-6px] right-6 w-3 h-3 bg-white border-r border-b border-gray-100 rotate-45" />
+          </div>
+        )}
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-ocid="whatsapp.chat.button"
+          className="flex items-center justify-center w-14 h-14 bg-[#25D366] hover:bg-[#20b858] text-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
+          aria-label="Chat on WhatsApp"
+        >
+          <SiWhatsapp className="w-7 h-7" />
+        </a>
+      </div>
     </div>
   );
 }
