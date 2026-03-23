@@ -188,17 +188,18 @@ export default function CheckoutPage() {
   const maskMobile = (m: string) =>
     m.length >= 4 ? `${m.slice(0, 2)}XXXXXX${m.slice(-2)}` : m;
 
-  // --- Validation ---
+  // --- Validation (only required fields: name, mobile, address1, village) ---
   const validateAddress = () => {
     const errs: Record<string, string> = {};
-    if (!fullName.trim()) errs.fullName = "Full name is required";
+    if (!fullName.trim()) errs.fullName = "Naam likhna zaroori hai";
     if (!/^[6-9]\d{9}$/.test(mobile))
-      errs.mobile = "Enter valid 10-digit mobile number";
-    if (!address1.trim()) errs.address1 = "Address Line 1 is required";
-    if (!villageName.trim()) errs.villageName = "Village/Town name is required";
-    if (!city.trim()) errs.city = "City is required";
-    if (!state) errs.state = "State is required";
-    if (!/^\d{6}$/.test(pincode)) errs.pincode = "Enter valid 6-digit pincode";
+      errs.mobile = "Sahi 10-digit mobile number likhein";
+    if (!address1.trim()) errs.address1 = "Address likhna zaroori hai";
+    if (!villageName.trim())
+      errs.villageName = "Gaon/Sheher ka naam likhna zaroori hai";
+    // Pincode optional but if filled must be valid
+    if (pincode && !/^\d{6}$/.test(pincode))
+      errs.pincode = "6-digit pincode likhein";
     setAddressErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -208,7 +209,7 @@ export default function CheckoutPage() {
       setOtpSent(true);
       setResendTimer(30);
       setCurrentStep(2);
-      toast.success(`OTP sent to ${maskMobile(mobile)}`);
+      toast.success(`OTP bheja gaya ${maskMobile(mobile)} par`);
     }
   };
 
@@ -217,7 +218,7 @@ export default function CheckoutPage() {
       setOtpError("");
       setCurrentStep(3);
     } else {
-      setOtpError("Invalid OTP. Please try again.");
+      setOtpError("Galat OTP hai. Dobara try karein. (Demo OTP: 123456)");
     }
   };
 
@@ -226,7 +227,7 @@ export default function CheckoutPage() {
       setCaptchaError("");
       setCurrentStep(4);
     } else {
-      setCaptchaError("Incorrect answer. Please try again.");
+      setCaptchaError("Galat jawab. Dobara try karein.");
       generateCaptcha();
     }
   };
@@ -234,30 +235,73 @@ export default function CheckoutPage() {
   const handlePlaceOrder = async () => {
     try {
       await placeOrder.mutateAsync(paymentMethod);
-    } catch (err: any) {
-      // Even if backend fails (no auth / guest checkout), show confirmation
-      if (err.message?.includes("empty")) {
-        toast.error("Your cart is empty");
+    } catch (err: unknown) {
+      const e = err as { message?: string };
+      if (e.message?.includes("empty")) {
+        toast.error("Cart khaali hai");
         navigate({ to: "/cart" });
         return;
       }
-      // Guest checkout - show confirmation anyway
+      // Guest checkout - save order to localStorage then show confirmation
+      const label =
+        {
+          [PaymentMethod.cashOnDelivery]: "Cash on Delivery",
+          [PaymentMethod.creditCard]: "Credit Card",
+          [PaymentMethod.paypal]: "PayPal",
+          [PaymentMethod.crypto]: "Cryptocurrency",
+        }[paymentMethod] ?? "Cash on Delivery";
+
+      const guestOrder = {
+        orderId,
+        fullName,
+        mobile,
+        address: [address1, address2, villageName, city, state, pincode]
+          .filter(Boolean)
+          .join(", "),
+        paymentMethod: label,
+        items:
+          isDirectBuy && directBuyProduct
+            ? [
+                {
+                  id: directBuyProduct.id,
+                  name: directBuyProduct.name,
+                  price: directBuyProduct.price,
+                  image: directBuyProduct.image,
+                  quantity: 1,
+                },
+              ]
+            : uniqueProducts.map((p) => ({
+                id: p.id.toString(),
+                name: p.name,
+                price: Number(p.price),
+                image: p.imageURL || "",
+                quantity: productCounts[p.id.toString()] || 1,
+              })),
+        total,
+        createdAt: new Date().toISOString(),
+      };
+
+      const existingOrders = JSON.parse(
+        localStorage.getItem("guestOrders") || "[]",
+      );
+      existingOrders.unshift(guestOrder);
+      localStorage.setItem("guestOrders", JSON.stringify(existingOrders));
+      localStorage.removeItem("cart");
+
       setOrderPlaced(true);
-      toast.success("Booking confirmed! 🎉");
+      sessionStorage.removeItem("directBuyProduct");
+      toast.success("Booking confirm ho gayi! 🎉");
       return;
     }
     setOrderPlaced(true);
     sessionStorage.removeItem("directBuyProduct");
-    toast.success("Booking confirmed! 🎉");
+    toast.success("Booking confirm ho gayi! 🎉");
   };
 
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div
-          className="animate-pulse space-y-4"
-          data-ocid="checkout.loading_state"
-        >
+        <div className="animate-pulse space-y-4">
           <div className="h-8 bg-muted rounded w-1/4" />
           <div className="h-64 bg-muted rounded" />
         </div>
@@ -268,22 +312,22 @@ export default function CheckoutPage() {
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <ErrorState message="Failed to load checkout. Please try again." />
+        <ErrorState message="Checkout load nahi hua. Dobara try karein." />
       </div>
     );
   }
 
-  const isDirectBuy = !cartWithProducts?.length && !!directBuyProduct;
+  const isDirectBuy = !!directBuyProduct;
 
   if (!isDirectBuy && (!cartWithProducts || cartWithProducts.length === 0)) {
     return (
       <div className="container mx-auto px-4 py-8">
         <EmptyState
           icon={<ShoppingBag className="w-8 h-8 text-muted-foreground" />}
-          title="Your cart is empty"
-          description="Add some products before checking out"
+          title="Cart khaali hai"
+          description="Pehle koi product add karein"
           action={{
-            label: "Continue Shopping",
+            label: "Shopping Karein",
             onClick: () => navigate({ to: "/" }),
           }}
         />
@@ -333,10 +377,10 @@ export default function CheckoutPage() {
                   <CheckCircle className="w-10 h-10 text-green-600" />
                 </div>
                 <h2 className="text-2xl font-bold text-green-700 mb-1">
-                  🎉 Your Booking is Confirmed!
+                  🎉 Aapki Booking Confirm Ho Gayi!
                 </h2>
                 <p className="text-muted-foreground">
-                  Thank you for shopping at A to Z Mobile Store
+                  A to Z Mobile Store par shopping karne ke liye shukriya
                 </p>
               </div>
 
@@ -349,7 +393,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground font-medium">
-                    Name
+                    Naam
                   </span>
                   <span className="font-semibold">{fullName}</span>
                 </div>
@@ -372,15 +416,18 @@ export default function CheckoutPage() {
                   </span>
                   <p className="font-semibold mt-1">
                     {address1}
-                    {address2 ? `, ${address2}` : ""}, {villageName}, {city},{" "}
-                    {state} – {pincode}
+                    {address2 ? `, ${address2}` : ""}
+                    {villageName ? `, ${villageName}` : ""}
+                    {city ? `, ${city}` : ""}
+                    {state ? `, ${state}` : ""}
+                    {pincode ? ` – ${pincode}` : ""}
                   </p>
                 </div>
               </div>
 
               <div className="mb-6">
                 <h3 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wider">
-                  Items Ordered
+                  Order Kiye Gaye Items
                 </h3>
                 <div className="space-y-3">
                   {isDirectBuy && directBuyProduct ? (
@@ -452,7 +499,7 @@ export default function CheckoutPage() {
                 className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                 onClick={() => navigate({ to: "/orders" })}
               >
-                View My Orders
+                Mere Orders Dekho
               </Button>
             </CardContent>
           </Card>
@@ -463,18 +510,16 @@ export default function CheckoutPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Page Title */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold">Checkout</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Complete your booking in easy steps
+          Aasaan steps mein apna order complete karein
         </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Left: Steps */}
         <div className="lg:col-span-2">
-          {/* Step Progress */}
           <StepProgress currentStep={currentStep} />
 
           {/* STEP 1: Address */}
@@ -487,17 +532,20 @@ export default function CheckoutPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <p className="text-xs text-muted-foreground">
+                  <span className="text-red-500">*</span> wale fields zaroori
+                  hain, baaki optional hain
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label htmlFor="fullName">
-                      Full Name <span className="text-red-500">*</span>
+                      Poora Naam <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       id="fullName"
-                      placeholder="Enter your full name"
+                      placeholder="Apna poora naam likhein"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      data-ocid="checkout.name.input"
                     />
                     {addressErrors.fullName && (
                       <p className="text-xs text-red-500">
@@ -517,7 +565,6 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setMobile(e.target.value.replace(/\D/g, ""))
                       }
-                      data-ocid="checkout.mobile.input"
                     />
                     {addressErrors.mobile && (
                       <p className="text-xs text-red-500">
@@ -529,15 +576,13 @@ export default function CheckoutPage() {
 
                 <div className="space-y-1">
                   <Label htmlFor="address1">
-                    Address Line 1 (Flat / House No.){" "}
-                    <span className="text-red-500">*</span>
+                    Address <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="address1"
-                    placeholder="House/flat no., building name"
+                    placeholder="Ghar/flat no., building ka naam"
                     value={address1}
                     onChange={(e) => setAddress1(e.target.value)}
-                    data-ocid="checkout.address1.input"
                   />
                   {addressErrors.address1 && (
                     <p className="text-xs text-red-500">
@@ -547,28 +592,25 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-1">
-                  <Label htmlFor="address2">
-                    Address Line 2 (Area / Street)
-                  </Label>
+                  <Label htmlFor="address2">Address Line 2 (Optional)</Label>
                   <Input
                     id="address2"
-                    placeholder="Colony, area, street"
+                    placeholder="Colony, area, street (optional)"
                     value={address2}
                     onChange={(e) => setAddress2(e.target.value)}
-                    data-ocid="checkout.address2.input"
                   />
                 </div>
 
                 <div className="space-y-1">
                   <Label htmlFor="villageName">
-                    Village / Town Name <span className="text-red-500">*</span>
+                    Gaon / Sheher ka Naam{" "}
+                    <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="villageName"
-                    placeholder="Enter your village or town name"
+                    placeholder="Apne gaon ya sheher ka naam likhein"
                     value={villageName}
                     onChange={(e) => setVillageName(e.target.value)}
-                    data-ocid="checkout.village.input"
                   />
                   {addressErrors.villageName && (
                     <p className="text-xs text-red-500">
@@ -579,31 +621,20 @@ export default function CheckoutPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="space-y-1">
-                    <Label htmlFor="city">
-                      City <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="city">City (Optional)</Label>
                     <Input
                       id="city"
                       placeholder="City"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      data-ocid="checkout.city.input"
                     />
-                    {addressErrors.city && (
-                      <p className="text-xs text-red-500">
-                        {addressErrors.city}
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="state">
-                      State <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="state">State (Optional)</Label>
                     <select
                       id="state"
                       value={state}
                       onChange={(e) => setState(e.target.value)}
-                      data-ocid="checkout.state.input"
                       className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     >
                       <option value="">Select State</option>
@@ -613,16 +644,9 @@ export default function CheckoutPage() {
                         </option>
                       ))}
                     </select>
-                    {addressErrors.state && (
-                      <p className="text-xs text-red-500">
-                        {addressErrors.state}
-                      </p>
-                    )}
                   </div>
                   <div className="space-y-1">
-                    <Label htmlFor="pincode">
-                      Pincode <span className="text-red-500">*</span>
-                    </Label>
+                    <Label htmlFor="pincode">Pincode (Optional)</Label>
                     <Input
                       id="pincode"
                       placeholder="6-digit pincode"
@@ -631,7 +655,6 @@ export default function CheckoutPage() {
                       onChange={(e) =>
                         setPincode(e.target.value.replace(/\D/g, ""))
                       }
-                      data-ocid="checkout.pincode.input"
                     />
                     {addressErrors.pincode && (
                       <p className="text-xs text-red-500">
@@ -645,7 +668,6 @@ export default function CheckoutPage() {
                   <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white px-8"
                     onClick={handleAddressContinue}
-                    data-ocid="checkout.continue.button"
                   >
                     Continue
                   </Button>
@@ -665,23 +687,23 @@ export default function CheckoutPage() {
               </CardHeader>
               <CardContent className="space-y-5">
                 <div className="bg-orange-50 border border-orange-200 rounded-lg px-4 py-3 text-sm text-orange-800">
-                  OTP sent to <strong>{maskMobile(mobile)}</strong>. Please
-                  enter the 6-digit OTP below.
-                  <span className="block text-xs mt-1 text-orange-600">
-                    (Demo OTP: 123456)
+                  OTP bheja gaya <strong>{maskMobile(mobile)}</strong> par.
+                  Neeche 6-digit OTP likhein.
+                  <span className="block text-xs mt-1 text-orange-600 font-semibold">
+                    Demo OTP: 123456
                   </span>
                 </div>
 
                 <div className="space-y-1 max-w-xs">
-                  <Label htmlFor="otp">Enter OTP</Label>
+                  <Label htmlFor="otp">OTP Likhein</Label>
                   <Input
                     id="otp"
                     placeholder="6-digit OTP"
                     maxLength={6}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    data-ocid="checkout.otp.input"
                     className="text-lg tracking-widest font-mono"
+                    autoFocus
                   />
                   {otpError && (
                     <p className="text-xs text-red-500">{otpError}</p>
@@ -691,7 +713,7 @@ export default function CheckoutPage() {
                 <div className="flex items-center gap-2 text-sm">
                   {resendTimer > 0 ? (
                     <span className="text-muted-foreground">
-                      Resend OTP in <strong>{resendTimer}s</strong>
+                      Resend OTP <strong>{resendTimer}s</strong> mein
                     </span>
                   ) : (
                     <button
@@ -699,26 +721,23 @@ export default function CheckoutPage() {
                       className="flex items-center gap-1 text-orange-600 hover:underline font-medium"
                       onClick={() => {
                         setResendTimer(30);
-                        toast.success(`OTP resent to ${maskMobile(mobile)}`);
+                        toast.success(
+                          `OTP wapas bheja gaya ${maskMobile(mobile)} par`,
+                        );
                       }}
                     >
-                      <RefreshCw className="w-3 h-3" /> Resend OTP
+                      <RefreshCw className="w-3 h-3" /> OTP Dubara Bhejein
                     </button>
                   )}
                 </div>
 
                 <div className="flex items-center gap-3 pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentStep(1)}
-                    data-ocid="checkout.back.button"
-                  >
-                    Back
+                  <Button variant="outline" onClick={() => setCurrentStep(1)}>
+                    Wapas
                   </Button>
                   <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white px-8"
                     onClick={handleOtpContinue}
-                    data-ocid="checkout.continue.button"
                   >
                     Verify & Continue
                   </Button>
@@ -738,7 +757,7 @@ export default function CheckoutPage() {
               </CardHeader>
               <CardContent className="space-y-5">
                 <p className="text-sm text-muted-foreground">
-                  Please solve the math problem below to verify you're human.
+                  Neeche ka math problem solve karein.
                 </p>
 
                 <div className="flex items-center gap-4">
@@ -756,15 +775,15 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="space-y-1 max-w-xs">
-                  <Label htmlFor="captcha">Your Answer</Label>
+                  <Label htmlFor="captcha">Jawab Likhein</Label>
                   <Input
                     id="captcha"
-                    placeholder="Enter the answer"
+                    placeholder="Jawab"
                     value={captchaAnswer}
                     onChange={(e) =>
                       setCaptchaAnswer(e.target.value.replace(/\D/g, ""))
                     }
-                    data-ocid="checkout.captcha.input"
+                    autoFocus
                   />
                   {captchaError && (
                     <p className="text-xs text-red-500">{captchaError}</p>
@@ -772,17 +791,12 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="flex items-center gap-3 pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentStep(2)}
-                    data-ocid="checkout.back.button"
-                  >
-                    Back
+                  <Button variant="outline" onClick={() => setCurrentStep(2)}>
+                    Wapas
                   </Button>
                   <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white px-8"
                     onClick={handleCaptchaContinue}
-                    data-ocid="checkout.continue.button"
                   >
                     Continue
                   </Button>
@@ -797,7 +811,7 @@ export default function CheckoutPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <CreditCard className="w-5 h-5 text-orange-500" />
-                  Select Payment Method
+                  Payment Method Chunein
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -812,13 +826,13 @@ export default function CheckoutPage() {
                       {
                         value: PaymentMethod.cashOnDelivery,
                         label: "Cash on Delivery",
-                        sub: "Pay when you receive your order",
+                        sub: "Delivery par cash dein",
                         icon: <Truck className="w-5 h-5 text-orange-500" />,
                       },
                       {
                         value: PaymentMethod.creditCard,
                         label: "Credit / Debit Card",
-                        sub: "Pay securely with your card",
+                        sub: "Card se secure payment",
                         icon: (
                           <CreditCard className="w-5 h-5 text-orange-500" />
                         ),
@@ -826,13 +840,13 @@ export default function CheckoutPage() {
                       {
                         value: PaymentMethod.paypal,
                         label: "PayPal / UPI",
-                        sub: "Fast and secure payment",
+                        sub: "Fast aur secure payment",
                         icon: <Wallet className="w-5 h-5 text-orange-500" />,
                       },
                       {
                         value: PaymentMethod.crypto,
                         label: "Cryptocurrency",
-                        sub: "Pay with Bitcoin or other crypto",
+                        sub: "Bitcoin ya doosri crypto se pay karein",
                         icon: <Bitcoin className="w-5 h-5 text-orange-500" />,
                       },
                     ].map((opt) => (
@@ -868,35 +882,30 @@ export default function CheckoutPage() {
                 </RadioGroup>
 
                 <div className="flex items-center gap-3 pt-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentStep(3)}
-                    data-ocid="checkout.back.button"
-                  >
-                    Back
+                  <Button variant="outline" onClick={() => setCurrentStep(3)}>
+                    Wapas
                   </Button>
                   <Button
                     className="bg-orange-500 hover:bg-orange-600 text-white px-8 flex-1"
                     onClick={handlePlaceOrder}
                     disabled={placeOrder.isPending}
-                    data-ocid="checkout.placeorder.button"
                   >
                     {placeOrder.isPending
-                      ? "Placing Order..."
-                      : "Confirm Booking"}
+                      ? "Order Place Ho Raha Hai..."
+                      : "Order Confirm Karein"}
                   </Button>
                 </div>
                 <p className="text-xs text-center text-muted-foreground">
-                  By placing your order, you agree to our Terms & Conditions.
+                  Order place karke aap hamare Terms & Conditions se agree karte
+                  hain.
                 </p>
               </CardContent>
             </Card>
           )}
         </div>
 
-        {/* Right: Order Summary (sticky) */}
+        {/* Right: Order Summary */}
         <div className="lg:col-span-1">
-          {/* Items */}
           <Card className="mb-4">
             <CardHeader className="pb-2">
               <CardTitle className="text-base">
@@ -960,7 +969,6 @@ export default function CheckoutPage() {
             </CardContent>
           </Card>
 
-          {/* Summary */}
           <Card className="sticky top-20">
             <CardHeader className="pb-2">
               <CardTitle className="text-base">Order Summary</CardTitle>
@@ -971,7 +979,7 @@ export default function CheckoutPage() {
                 <span className="font-medium">₹{total}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Shipping</span>
+                <span className="text-muted-foreground">Delivery</span>
                 <span className="font-medium text-green-600">Free</span>
               </div>
               <div className="flex justify-between text-sm">
@@ -984,7 +992,7 @@ export default function CheckoutPage() {
                 <span className="text-orange-600">₹{total}</span>
               </div>
               <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-xs text-green-700">
-                ✅ Free delivery on this order
+                ✅ Is order par free delivery milegi
               </div>
             </CardContent>
           </Card>

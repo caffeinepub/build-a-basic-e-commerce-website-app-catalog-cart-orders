@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ShoppingCart, Zap } from "lucide-react";
+import { toast } from "sonner";
 import ProductImage from "./ProductImage";
 
 interface ProductCardProps {
@@ -21,8 +22,31 @@ export default function ProductCard({
 
   const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (onAddToCart) onAddToCart(product.id);
+    // Store product in sessionStorage for direct buy (no auth required)
+    try {
+      sessionStorage.setItem(
+        "directBuyProduct",
+        JSON.stringify({
+          id: product.id.toString(),
+          name: product.name,
+          price: Number(product.price),
+          image: product.imageURL || "",
+          specs: product.description || "",
+        }),
+      );
+    } catch {
+      // ignore
+    }
     navigate({ to: "/checkout" });
+  };
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (onAddToCart) {
+      onAddToCart(product.id);
+    } else {
+      toast.info("Cart mein add ho raha hai...");
+    }
   };
 
   return (
@@ -57,7 +81,6 @@ export default function ProductCard({
       <CardFooter className="p-4 pt-0 flex flex-col gap-2">
         <Button
           onClick={handleBuyNow}
-          disabled={isAddingToCart}
           className="w-full gap-2 bg-orange-500 hover:bg-orange-600 text-white font-bold"
           size="sm"
           data-ocid="product.buynow.button"
@@ -66,7 +89,7 @@ export default function ProductCard({
           Buy Now
         </Button>
         <Button
-          onClick={() => onAddToCart?.(product.id)}
+          onClick={handleAddToCart}
           disabled={isAddingToCart}
           variant="outline"
           className="w-full gap-2"

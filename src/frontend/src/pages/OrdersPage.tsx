@@ -1,161 +1,169 @@
-import { PaymentMethod } from "@/backend";
-import { EmptyState, ErrorState } from "@/components/feedback/ScreenStates";
-import ProductImage from "@/components/store/ProductImage";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useGetOrdersByUser } from "@/hooks/store/useOrders";
-import { useGetAllProducts } from "@/hooks/store/useProducts";
 import { useNavigate } from "@tanstack/react-router";
-import { Bitcoin, CreditCard, Package, Truck, Wallet } from "lucide-react";
+import { CheckCircle, Package } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const paymentMethodLabels: Record<PaymentMethod, string> = {
-  [PaymentMethod.cashOnDelivery]: "Cash on Delivery",
-  [PaymentMethod.creditCard]: "Credit Card",
-  [PaymentMethod.paypal]: "PayPal",
-  [PaymentMethod.crypto]: "Cryptocurrency",
-  [PaymentMethod.klarnaPayLater]: "Klarna Pay Later",
-};
+interface GuestOrderItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
 
-const paymentMethodIcons: Record<PaymentMethod, React.ReactNode> = {
-  [PaymentMethod.cashOnDelivery]: <Truck className="w-4 h-4" />,
-  [PaymentMethod.creditCard]: <CreditCard className="w-4 h-4" />,
-  [PaymentMethod.paypal]: <Wallet className="w-4 h-4" />,
-  [PaymentMethod.crypto]: <Bitcoin className="w-4 h-4" />,
-  [PaymentMethod.klarnaPayLater]: <Wallet className="w-4 h-4" />,
-};
+interface GuestOrder {
+  orderId: string;
+  fullName: string;
+  mobile: string;
+  address: string;
+  paymentMethod: string;
+  items: GuestOrderItem[];
+  total: number;
+  createdAt: string;
+}
 
 export default function OrdersPage() {
   const navigate = useNavigate();
-  const { data: orders, isLoading, error, refetch } = useGetOrdersByUser();
-  const { data: products } = useGetAllProducts();
+  const [guestOrders, setGuestOrders] = useState<GuestOrder[]>([]);
 
-  const getProductById = (id: bigint) => {
-    return products?.find((p) => p.id === id);
-  };
+  useEffect(() => {
+    const stored = localStorage.getItem("guestOrders");
+    if (stored) {
+      try {
+        setGuestOrders(JSON.parse(stored));
+      } catch {
+        setGuestOrders([]);
+      }
+    }
+  }, []);
 
-  if (isLoading) {
+  if (guestOrders.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-muted rounded w-1/4" />
-          <div className="h-64 bg-muted rounded" />
+        <div
+          data-ocid="orders.empty_state"
+          className="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+            <Package className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Koi order nahi hai</h2>
+          <p className="text-muted-foreground mb-6">
+            Shopping karein aur aapke orders yahan dikhenge
+          </p>
+          <Button
+            data-ocid="orders.primary_button"
+            onClick={() => navigate({ to: "/" })}
+            className="bg-orange-500 hover:bg-orange-600 text-white"
+          >
+            Shopping Karein
+          </Button>
         </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <ErrorState
-          message="Failed to load orders. Please try again."
-          onRetry={() => refetch()}
-        />
-      </div>
-    );
-  }
-
-  if (!orders || orders.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <EmptyState
-          icon={<Package className="w-8 h-8 text-muted-foreground" />}
-          title="No orders yet"
-          description="Start shopping to see your orders here"
-          action={{
-            label: "Start Shopping",
-            onClick: () => navigate({ to: "/" }),
-          }}
-        />
       </div>
     );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">My Orders</h1>
+      <h1 className="text-3xl font-bold mb-2">Mere Orders</h1>
+      <p className="text-muted-foreground mb-8">
+        Aapke saare orders yahan hain
+      </p>
 
-      <div className="space-y-6">
-        {orders.map((order) => {
-          // Count occurrences
-          const itemCounts = order.items.reduce(
-            (acc, productId) => {
-              const id = productId.toString();
-              acc[id] = (acc[id] || 0) + 1;
-              return acc;
-            },
-            {} as Record<string, number>,
-          );
-
-          const uniqueItems = Array.from(
-            new Set(order.items.map((id) => id.toString())),
-          );
-
-          return (
-            <Card key={order.id.toString()}>
-              <CardHeader>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl">
-                      Order #{order.id.toString()}
-                    </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {order.items.length} item
-                      {order.items.length !== 1 ? "s" : ""}
-                    </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      {paymentMethodIcons[order.paymentMethod]}
-                      <span className="text-sm text-muted-foreground">
-                        {paymentMethodLabels[order.paymentMethod]}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <Badge variant="secondary">Completed</Badge>
-                    <p className="text-lg font-bold mt-2">
-                      ${Number(order.total)}
-                    </p>
-                  </div>
+      <div className="space-y-6" data-ocid="orders.list">
+        {guestOrders.map((order, index) => (
+          <Card
+            key={order.orderId}
+            data-ocid={`orders.item.${index + 1}`}
+            className="border-2 border-orange-100"
+          >
+            <CardHeader>
+              <div className="flex justify-between items-start flex-wrap gap-2">
+                <div>
+                  <CardTitle className="text-lg text-orange-700">
+                    Order #{order.orderId}
+                  </CardTitle>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <p className="text-sm mt-1">
+                    Naam:{" "}
+                    <span className="font-semibold">
+                      {order.fullName || "N/A"}
+                    </span>
+                  </p>
+                  <p className="text-sm">
+                    Payment:{" "}
+                    <span className="font-semibold">{order.paymentMethod}</span>
+                  </p>
                 </div>
-              </CardHeader>
-              <Separator />
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  {uniqueItems.map((productIdStr) => {
-                    const productId = BigInt(productIdStr);
-                    const product = getProductById(productId);
-                    const quantity = itemCounts[productIdStr];
-
-                    if (!product) return null;
-
-                    return (
-                      <div key={productIdStr} className="flex gap-4">
-                        <div className="w-16 h-16 rounded-md overflow-hidden bg-muted shrink-0">
-                          <ProductImage
-                            productId={product.id}
-                            imageURL={product.imageURL}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{product.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            ${Number(product.price)} × {quantity}
-                          </p>
-                        </div>
-                        <div className="text-right font-semibold">
-                          ${Number(product.price) * quantity}
-                        </div>
+                <div className="text-right">
+                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Confirmed
+                  </Badge>
+                  <p className="text-xl font-bold mt-2 text-orange-600">
+                    ₹{order.total.toLocaleString("en-IN")}
+                  </p>
+                </div>
+              </div>
+            </CardHeader>
+            <Separator />
+            <CardContent className="pt-4">
+              {order.address && (
+                <p className="text-sm text-muted-foreground mb-4">
+                  <span className="font-medium">Delivery: </span>
+                  {order.address}
+                </p>
+              )}
+              <div className="space-y-3">
+                {order.items.map((item) => (
+                  <div
+                    key={`${item.id}-${item.name}`}
+                    className="flex items-center gap-3"
+                  >
+                    {item.image && (
+                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                    )}
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Qty: {item.quantity} × ₹
+                        {item.price.toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                    <span className="font-bold text-sm">
+                      ₹{(item.price * item.quantity).toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <div className="mt-8">
+        <Button
+          data-ocid="orders.primary_button"
+          onClick={() => navigate({ to: "/" })}
+          className="bg-orange-500 hover:bg-orange-600 text-white"
+        >
+          Aur Shopping Karein
+        </Button>
       </div>
     </div>
   );

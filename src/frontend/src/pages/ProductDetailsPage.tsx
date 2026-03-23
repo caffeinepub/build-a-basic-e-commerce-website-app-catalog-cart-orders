@@ -43,31 +43,29 @@ export default function ProductDetailsPage() {
       }
       toast.success(`${quantity}x ${product.name} cart mein add ho gaya! 🛍️`);
       setQuantity(1);
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      if (err.message?.includes("Unauthorized")) {
-        toast.error("Please sign in to add items to cart");
-      } else {
-        toast.error("Failed to add to cart");
-      }
+    } catch {
+      toast.error("Cart mein add nahi ho saka, dobara try karein");
     }
   };
 
-  const handleBuyNow = async () => {
+  const handleBuyNow = () => {
     if (!product) return;
+    // Store product in sessionStorage for direct buy (no auth required)
     try {
-      for (let i = 0; i < quantity; i++) {
-        await addToCart.mutateAsync(product.id);
-      }
-      navigate({ to: "/checkout" });
-    } catch (error: unknown) {
-      const err = error as { message?: string };
-      if (err.message?.includes("Unauthorized")) {
-        toast.error("Please sign in to buy");
-      } else {
-        toast.error("Failed to proceed");
-      }
+      sessionStorage.setItem(
+        "directBuyProduct",
+        JSON.stringify({
+          id: product.id.toString(),
+          name: product.name,
+          price: Number(product.price) * quantity,
+          image: product.imageURL || "",
+          specs: product.description || "",
+        }),
+      );
+    } catch {
+      // ignore
     }
+    navigate({ to: "/checkout" });
   };
 
   const handleWhatsAppShare = () => {
@@ -202,11 +200,10 @@ export default function ProductDetailsPage() {
               size="lg"
               className="w-full gap-2 font-bold text-base bg-orange-500 hover:bg-orange-600 text-white"
               onClick={handleBuyNow}
-              disabled={addToCart.isPending}
               data-ocid="product.buynow.button"
             >
               <Zap className="w-5 h-5" />
-              {addToCart.isPending ? "Processing..." : "Buy Now"}
+              Buy Now
             </Button>
             <Button
               size="lg"
